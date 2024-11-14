@@ -4,6 +4,7 @@ import crypto from "crypto";
 
 dotenv.config();
 class Payment {
+  // Tạo link thanh toán
   async momoPayment(req, res) {
     //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
     //parameters
