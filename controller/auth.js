@@ -84,7 +84,8 @@ class Auth {
 
       const token = jwt.sign(
         { _id: user._id, role: user.userRole },
-        JWT_SECRET
+        JWT_SECRET,
+        { expiresIn: '1h' }
       );
 
       res.json({ token, user: { _id: user._id, role: user.userRole } });

@@ -33,6 +33,20 @@ class Product {
       res.status(500).json({ error: "Internal server error" });
     }
   }
+  async searchProduct(req, res) {
+    try {
+      const {query} = req.query;
+      if(!query) {
+        return res.status(400).json({error: "query is required"});
+      }
+      let products = await productModel
+        .find({$text: {$search: query}});
+      return res.status(200).json(products);
+    } catch(err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
 
   async postAddProduct(req, res) {
     let { pName, pDescription, pPrice, pQuantity, pCategory, pOffer, pStatus } =
