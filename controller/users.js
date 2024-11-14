@@ -99,27 +99,20 @@ class User {
 
   async deleteUser(req, res) {
     let { id } = req.params;
-    let { status } = req.body; // Lấy trạng thái mới từ body của yêu cầu
-
-    if (!status) {
-      return res.status(400).json({ message: "Status must be provided" });
+    if(!id) {
+      return res.status(400).json({ error: "User id is required" });
     }
 
     try {
-      let user = await userModel.findByIdAndUpdate(
-        id,
-        {
-          status: status,
-          updatedAt: Date.now(),
-        },
-        { new: true }
+      let user = await userModel.findByIdAndDelete(
+        id
       );
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
 
-      return res.json({ success: "User status updated successfully", user });
+      return res.json({ success: "User deleted successfully", user });
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Internal server error" });
