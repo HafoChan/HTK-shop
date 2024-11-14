@@ -31,10 +31,10 @@ class Order {
   }
 
   async postCreateOrder(req, res) {
-    let { allProduct, user, amount, transactionId, address, phone } = req.body;
+    let { allProduct, /*user,*/ amount, transactionId, address, phone } = req.body;
     if (
       !allProduct ||
-      !user ||
+      // !user ||
       !amount ||
       !transactionId ||
       !address ||
@@ -45,7 +45,7 @@ class Order {
     try {
       let newOrder = new orderModel({
         allProduct,
-        user,
+        user:req.userDetails._id,
         amount,
         transactionId,
         address,
@@ -73,6 +73,15 @@ class Order {
       );
       if (!order) {
         return res.status(404).json({ error: "Order not found" });
+      }
+      if(![ 
+        "Not processed",
+        "Processing",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+      ].includes(status)) {
+        return res.status(400).json({ error: "Unsupported status" });
       }
       return res.json({ success: "Order updated successfully", order });
     } catch (err) {
