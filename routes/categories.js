@@ -21,13 +21,14 @@ router.get("/", categoryController.getAllCategory);
 router.post(
   "/",
   loginCheck,
+  isAuth,
   isAdmin,
   upload.single("cImage"),
   categoryController.postAddCategory
 );
 
-router.put("/:id", loginCheck, isAdmin, categoryController.putEditCategory);
+router.put("/:id", loginCheck, isAuth, isAdmin, categoryController.putEditCategory);
 
-router.delete("/:id", loginCheck, isAdmin, categoryController.deleteCategory);
+router.delete("/:id", loginCheck, isAuth, isAdmin, categoryController.deleteCategory);
 
 export default router;

@@ -10,7 +10,7 @@ export const loginCheck = (req, res, next) => {
     req.userDetails = decode;
     next();
   } catch (err) {
-    res.json({
+    res.status(401).json({
       error: "You must be logged in",
     });
   }
@@ -26,12 +26,15 @@ export const isAuth = (req, res, next) => {
 export const isAdmin = async (req, res, next) => {
   try {
     let reqUser = await userModel.findById(req.userDetails._id);
+    if(!reqUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
     // If user role 0 that's mean not admin it's customer
     if (reqUser.userRole === 0) {
       return res.status(403).json({ error: "Access denied" });
     }
     next();
-  } catch {
-    res.status(404).json({ error: "User not found" });
+  } catch(err) {
+    next(err);
   }
 };

@@ -25,7 +25,7 @@ CreateAllFolder();
 
 // Database Connection
 mongoose
-  .connect(process.env.DATABASE, {
+  .connect("mongodb://127.0.0.1:27017/Ecommerce", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

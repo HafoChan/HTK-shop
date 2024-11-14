@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import productController from "../controller/products.js";
 import multer from "multer";
+import { isAuth, loginCheck } from "../middleware/auth.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -26,7 +27,7 @@ router.put("/:id", upload.any(), productController.putEditProduct);
 router.delete("/:id", productController.deleteProduct);
 router.get("/:id", productController.getSingleProduct);
 
-router.post("/:id/review", productController.postAddReview);
-router.delete("/:productId/review/:reviewId", productController.deleteReview);
+router.post("/:id/review", loginCheck, isAuth, productController.postAddReview);
+router.delete("/:productId/review/:reviewId", loginCheck, isAuth, productController.deleteReview);
 
 export default router;
