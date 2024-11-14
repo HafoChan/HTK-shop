@@ -15,6 +15,7 @@ import productRouter from "./routes/products.js";
 import orderRouter from "./routes/orders.js";
 import usersRouter from "./routes/users.js";
 import customizeRouter from "./routes/customize.js";
+import paymentRouter from "./routes/payment.js";
 
 // Import Auth middleware for check user login or not
 import { loginCheck } from "./middleware/auth.js";
@@ -52,6 +53,7 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/customize", customizeRouter);
+app.use("/api/payment", paymentRouter);
 
 // Run Server
 const PORT = process.env.PORT || 8000;
