@@ -36,37 +36,6 @@ class User {
     }
   }
 
-  // async postAddUser(req, res) {
-  //   let { allProduct, user, amount, transactionId, address, phone } = req.body;
-  //   if (
-  //     !allProduct ||
-  //     !user ||
-  //     !amount ||
-  //     !transactionId ||
-  //     !address ||
-  //     !phone
-  //   ) {
-  //     return res.json({ message: "All filled must be required" });
-  //   } else {
-  //     try {
-  //       let newUser = new userModel({
-  //         allProduct,
-  //         user,
-  //         amount,
-  //         transactionId,
-  //         address,
-  //         phone,
-  //       });
-  //       let save = await newUser.save();
-  //       if (save) {
-  //         return res.json({ success: "User created successfully" });
-  //       }
-  //     } catch (err) {
-  //       return res.json({ error: err });
-  //     }
-  //   }
-  // }
-
   async putEditUser(req, res) {
     let { id } = req.params;
     let { name, phoneNumber } = req.body;
@@ -99,14 +68,12 @@ class User {
 
   async deleteUser(req, res) {
     let { id } = req.params;
-    if(!id) {
+    if (!id) {
       return res.status(400).json({ error: "User id is required" });
     }
 
     try {
-      let user = await userModel.findByIdAndDelete(
-        id
-      );
+      let user = await userModel.findByIdAndDelete(id);
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });

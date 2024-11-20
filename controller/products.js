@@ -35,14 +35,13 @@ class Product {
   }
   async searchProduct(req, res) {
     try {
-      const {query} = req.query;
-      if(!query) {
-        return res.status(400).json({error: "query is required"});
+      const { query } = req.query;
+      if (!query) {
+        return res.status(400).json({ error: "query is required" });
       }
-      let products = await productModel
-        .find({$text: {$search: query}});
+      let products = await productModel.find({ $text: { $search: query } });
       return res.status(200).json(products);
-    } catch(err) {
+    } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -98,7 +97,7 @@ class Product {
           .json({ success: "Product created successfully" });
       } catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ err });
       }
     }
   }
@@ -254,6 +253,78 @@ class Product {
         _id: { $in: productArray },
       });
       return res.json({ products: cartProducts });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async getSingleReviewOfProduct(req, res) {
+    let { productId, reviewId } = req.params;
+    try {
+      let product = await productModel.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      let review = product.pRatingsReviews.id(reviewId);
+      if (!review) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+      return res.json({ review });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async getAllReviewOfProduct(req, res) {
+    let { productId } = req.params;
+    try {
+      let product = await productModel.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      return res.json({ reviews: product.pRatingsReviews });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async putEditReview(req, res) {
+    let { productId, reviewId } = req.params;
+    let { rating, review, uId } = req.body;
+
+    if (!rating || !review || !uId) {
+      return res.status(400).json({ error: "All fields must be filled" });
+    }
+
+    try {
+      let product = await productModel.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      let reviewToEdit = product.pRatingsReviews.id(reviewId);
+      if (!reviewToEdit) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+
+      if (reviewToEdit.user.toString() !== uId) {
+        return res
+          .status(403)
+          .json({ error: "You are not authorized to edit this review" });
+      }
+
+      reviewToEdit.rating = rating;
+      reviewToEdit.review = review;
+
+      await product.save();
+
+      return res.json({
+        success: "Review updated successfully",
+        review: reviewToEdit,
+      });
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Internal server error" });

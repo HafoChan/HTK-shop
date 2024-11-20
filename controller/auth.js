@@ -51,7 +51,7 @@ class Auth {
         name: toTitleCase(name),
         email,
         password: hashedPassword,
-        userRole: 1, // Default role for admin
+        userRole: 0, // Default role for admin
       });
 
       await newUser.save();
@@ -85,7 +85,7 @@ class Auth {
       const token = jwt.sign(
         { _id: user._id, role: user.userRole },
         JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: "1h" }
       );
 
       res.json({ token, user: { _id: user._id, role: user.userRole } });

@@ -17,6 +17,57 @@ class Customize {
     }
   }
 
+  async getSingleImage(req, res) {
+    let { id } = req.params;
+    try {
+      let image = await customizeModel.findById(id);
+      if (!image) {
+        return res.status(404).json({ error: "Image not found" });
+      }
+      return res.json({ image });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async updateSlideImage(req, res) {
+    let { id } = req.params;
+    let { firstShow } = req.body;
+
+    try {
+      let existingImage = await customizeModel.findById(id);
+      if (!existingImage) {
+        return res.status(404).json({ error: "Image not found" });
+      }
+
+      if (req.file) {
+        const oldFilePath = path.join(
+          __dirname,
+          "../public/uploads/customize",
+          existingImage.slideImage
+        );
+
+        // Xóa hình ảnh cũ
+        fs.unlink(oldFilePath, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+        existingImage.slideImage = req.file.filename;
+      }
+
+      existingImage.firstShow = firstShow || existingImage.firstShow;
+
+      let updatedImage = await existingImage.save();
+
+      return res.json({ success: "Image updated successfully", updatedImage });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async uploadSlideImage(req, res) {
     let image = req.file.filename;
     let { firstShow } = req.body;
