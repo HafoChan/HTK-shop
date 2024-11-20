@@ -27,12 +27,30 @@ class Product {
         .find({})
         .populate("pCategory", "_id cName")
         .sort({ _id: -1 });
+
+      // Tính toán avgReview cho từng sản phẩm
+      products = products.map((product) => {
+        const reviews = product.pRatingsReviews;
+        const totalRating = reviews.reduce(
+          (acc, review) => acc + parseFloat(review.rating),
+          0
+        );
+        const avgReview =
+          reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : 0;
+
+        return {
+          ...product.toObject(), // Chuyển đổi Mongoose document thành object
+          avgReview, // Thêm trường avgReview vào sản phẩm
+        };
+      });
+
       return res.json({ products });
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Internal server error" });
     }
   }
+
   async searchProduct(req, res) {
     try {
       const { query } = req.query;
@@ -213,13 +231,37 @@ class Product {
     }
   }
 
-  async getProductByPrice(req, res) {
-    let { price } = req.params;
+  async getProductByFilter(req, res) {
+    // Mặc định chỉ lọc theo giá, nhỏ hơn và sort giảm dần
+    let { price, filterType, sortType } = req.query;
+
+    let filterCriteria = {};
+
+    // Kiểm tra bộ lọc giá
+    if (price) {
+      if (filterType === "greater") {
+        filterCriteria.pPrice = { $gt: price };
+      } else {
+        filterCriteria.pPrice = { $lt: price };
+      }
+    } else {
+      filterCriteria.pPrice = { $lt: Infinity };
+    }
+
+    // Kiểm tra sort
+    let sortCriteria = {};
+    if (sortType === "asc") {
+      sortCriteria.pPrice = 1;
+    } else {
+      sortCriteria.pPrice = -1;
+    }
+
     try {
       let products = await productModel
-        .find({ pPrice: { $lt: price } })
+        .find(filterCriteria)
         .populate("pCategory", "cName")
-        .sort({ pPrice: -1 });
+        .sort(sortCriteria);
+
       return res.json({ products });
     } catch (err) {
       console.log(err);

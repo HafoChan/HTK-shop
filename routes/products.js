@@ -47,7 +47,7 @@ router.delete(
 router.get("/search", productController.searchProduct);
 
 // Phần lọc sản phẩm theo tiêu chí
-router.get("/price/:price", productController.getProductByPrice);
+router.get("/filter", productController.getProductByFilter);
 router.post("/wish", productController.getWishProduct);
 router.post("/cart", productController.getCartProduct);
 
