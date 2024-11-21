@@ -4,6 +4,8 @@ import ordersController from "../controller/orders.js";
 import { isAdmin, isAuth, loginCheck } from "../middleware/auth.js";
 
 router.get("/", loginCheck, isAuth, isAdmin, ordersController.getAllOrders);
+
+router.get("/:id", ordersController.getSingleOrderById);
 router.get(
   "/user/:userId",
   loginCheck,

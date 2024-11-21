@@ -17,6 +17,24 @@ class Order {
     }
   }
 
+  async getSingleOrderById(req, res) {
+    try {
+      let { id } = req.params;
+      let order = await orderModel
+        .findById(id)
+        .populate("allProduct.id", "pName pImages pPrice")
+        .populate("user", "name email")
+        .sort({ _id: -1 });
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      return res.json({ order });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async getOrderByUser(req, res) {
     let { userId } = req.params;
     try {
