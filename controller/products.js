@@ -132,6 +132,7 @@ class Product {
       pStatus,
       pImages,
     } = req.body;
+    console.log(req.body);
     let editImages = req.files;
 
     if (

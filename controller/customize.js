@@ -96,18 +96,8 @@ class Customize {
       if (!deletedSlideImage) {
         return res.status(404).json({ error: "Image not found" });
       }
-      const filePath = path.join(
-        __dirname,
-        "../public/uploads/customize",
-        deletedSlideImage.slideImage
-      );
       await customizeModel.findByIdAndDelete(id);
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        return res.json({ success: "Image deleted successfully" });
-      });
+      return res.json({ success: "Image deleted successfully" });
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Internal server error" });

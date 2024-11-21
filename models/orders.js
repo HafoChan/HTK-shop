@@ -29,6 +29,14 @@ const orderSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          // Regex kiểm tra số điện thoại Việt Nam
+          return /^(0[3|5|7|8|9]\d{8}|0[2]\d{9,10})$/.test(v);
+        },
+        message: (props) =>
+          `${props.value} is not a valid Vietnamese phone number!`,
+      },
     },
     status: {
       type: String,

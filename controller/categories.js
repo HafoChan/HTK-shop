@@ -1,5 +1,6 @@
 import { toTitleCase } from "../config/function.js";
 import categoryModel from "../models/categories.js";
+import productModel from "../models/products.js";
 import fs from "fs";
 
 class Category {
@@ -98,6 +99,16 @@ class Category {
   async deleteCategory(req, res) {
     let { id } = req.params;
     try {
+      const products = await productModel
+        .find({ pCategory: id })
+        .populate("pCategory");
+
+      if (products.length > 0) {
+        return res
+          .status(409)
+          .json({ error: "Several products exist in category" });
+      }
+
       let category = await categoryModel.findById(id);
       if (!category) {
         return res.status(404).json({ error: "Category not found" });
