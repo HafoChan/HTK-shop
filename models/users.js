@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
       default: "active",
     },
     phoneNumber: {
-      type: Number,
+      type: String,
     },
     userImage: {
       type: String,
