@@ -1,5 +1,6 @@
 import orderModel from "../models/orders.js";
 import userModel from "../models/users.js";
+import { v4 as uuidv4 } from "uuid";
 
 class Order {
   async getAllOrders(req, res) {
@@ -32,15 +33,8 @@ class Order {
   }
 
   async postCreateOrder(req, res) {
-    let { allProduct, user, amount, transactionId, address, phone } = req.body;
-    if (
-      !allProduct ||
-      !user ||
-      !amount ||
-      !transactionId ||
-      !address ||
-      !phone
-    ) {
+    let { allProduct, user, amount, address, phone } = req.body;
+    if (!allProduct || !user || !amount || !address || !phone) {
       return res.status(400).json({ message: "All fields must be filled" });
     }
 
@@ -49,6 +43,8 @@ class Order {
       if (!existingUser) {
         return res.status(404).json({ error: "User not found" });
       }
+
+      const transactionId = uuidv4();
 
       let newOrder = new orderModel({
         allProduct,

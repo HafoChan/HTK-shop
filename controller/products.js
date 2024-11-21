@@ -374,13 +374,13 @@ class Product {
   }
 
   async postAddReview(req, res) {
-    let { id } = req.params;
+    let { productId } = req.params;
     let { uId, rating, review } = req.body;
     if (!rating || !review || !uId) {
       return res.status(400).json({ error: "All fields must be filled" });
     }
     try {
-      let product = await productModel.findById(id);
+      let product = await productModel.findById(productId);
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
