@@ -1,5 +1,6 @@
 import orderModel from "../models/orders.js";
 import userModel from "../models/users.js";
+import productModel from "../models/products.js";
 import { v4 as uuidv4 } from "uuid";
 
 class Order {
@@ -51,6 +52,7 @@ class Order {
   }
 
   async postCreateOrder(req, res) {
+    console.log(req.body);
     let { allProduct, user, amount, address, phone } = req.body;
     if (!allProduct || !user || !amount || !address || !phone) {
       return res.status(400).json({ message: "All fields must be filled" });
@@ -60,6 +62,26 @@ class Order {
       const existingUser = await userModel.findById(user);
       if (!existingUser) {
         return res.status(404).json({ error: "User not found" });
+      }
+
+      // Xử lý trừ sản phẩm trong kho
+      for (const element of allProduct) {
+        const product = await productModel.findById(element.id);
+        if (product) {
+          const quantityToDeduct = parseInt(element.quantitiy); // Đảm bảo giá trị là số
+          if (!isNaN(quantityToDeduct) && quantityToDeduct > 0) {
+            product.pQuantity -= quantityToDeduct; // Trừ số lượng
+            await product.save();
+          } else {
+            return res
+              .status(400)
+              .json({ error: "Invalid quantity for product " + element.id });
+          }
+        } else {
+          return res
+            .status(404)
+            .json({ error: "Product not found for ID " + element.id });
+        }
       }
 
       const transactionId = uuidv4();
