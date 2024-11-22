@@ -233,16 +233,26 @@ class Product {
   }
 
   async getProductByFilter(req, res) {
-    // Mặc định chỉ lọc theo giá, nhỏ hơn và sort giảm dần
     let { price, filterType, sortType } = req.query;
 
+    console.log(req.query);
+    // Kiểm tra xem price có phải là số không
+
+    if (!price || isNaN(price)) {
+      return res.status(400).json({ error: "Invalid or missing price value" });
+    }
+
     let filterCriteria = {};
+    let sortCriteria = {};
 
     // Kiểm tra bộ lọc giá
     if (price) {
+      if (filterType !== "greater" && filterType !== "less") {
+        return res.status(400).json({ error: "Invalid filterType" });
+      }
       if (filterType === "greater") {
         filterCriteria.pPrice = { $gt: price };
-      } else {
+      } else if (filterType === "less") {
         filterCriteria.pPrice = { $lt: price };
       }
     } else {
@@ -250,11 +260,12 @@ class Product {
     }
 
     // Kiểm tra sort
-    let sortCriteria = {};
     if (sortType === "asc") {
       sortCriteria.pPrice = 1;
-    } else {
+    } else if (sortType === "desc") {
       sortCriteria.pPrice = -1;
+    } else if (sortType) {
+      return res.status(400).json({ error: "Invalid sortType" });
     }
 
     try {

@@ -15,6 +15,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Phần lọc sản phẩm theo tiêu chí
+router.get("/filter", productController.getProductByFilter);
+router.post("/wish", productController.getWishProduct);
+router.post("/cart", productController.getCartProduct);
+
 // Lấy tất cả sản phẩm của 1 category
 router.get("/category/:categoryId", productController.getProductByCategory);
 // CRUD product
@@ -45,11 +50,6 @@ router.delete(
 );
 // Tìm kiểm theo tên
 router.get("/search", productController.searchProduct);
-
-// Phần lọc sản phẩm theo tiêu chí
-router.get("/filter", productController.getProductByFilter);
-router.post("/wish", productController.getWishProduct);
-router.post("/cart", productController.getCartProduct);
 
 // Phần review của sản phẩm
 router.get(
