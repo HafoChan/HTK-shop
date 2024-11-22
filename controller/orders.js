@@ -36,6 +36,15 @@ class Order {
     }
   }
 
+  async getSingleOrderByTransactionId(req, res) {
+    let { transactionId } = req.params;
+    let order = await orderModel.findOne({ transactionId });
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    return res.json({ order });
+  }
+
   async getOrderByUser(req, res) {
     let { userId } = req.params;
     try {
