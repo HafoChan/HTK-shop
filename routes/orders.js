@@ -12,6 +12,10 @@ router.get(
   isAuth,
   ordersController.getOrderByUser
 );
+router.get(
+  "/transaction/:transactionId",
+  ordersController.getSingleOrderByTransactionId
+);
 router.post("/", loginCheck, isAuth, ordersController.postCreateOrder);
 router.put("/:id", loginCheck, isAuth, ordersController.putUpdateOrder);
 router.delete(

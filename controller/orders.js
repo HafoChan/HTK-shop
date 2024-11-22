@@ -42,7 +42,7 @@ class Order {
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
-    return res.json({ order });
+    return res.json({ orders: [order] });
   }
 
   async getOrderByUser(req, res) {
